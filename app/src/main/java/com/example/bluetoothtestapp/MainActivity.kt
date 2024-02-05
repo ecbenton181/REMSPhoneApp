@@ -54,6 +54,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
 
         textView = findViewById(R.id.textView)
         textView.text = "Message: "
+        //llkhlkjh
 
         resetButton = findViewById<Button>(R.id.resetButton)
         resetButton.setOnClickListener {
