@@ -38,6 +38,45 @@ class MainActivity : androidx.activity.ComponentActivity() {
     private val MY_UUID: UUID = UUID.fromString("0000ffe0-0000-1000-8000-00805f9b34fb") // Standard SerialPortService ID
     private val characteristicUUID: UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9B34fb")
     private lateinit var messageCountTextView: TextView
+    //sensor temperature variables
+    private lateinit var sensor1Temp:TextView
+    private lateinit var sensor2Temp:TextView
+    private lateinit var sensor3Temp:TextView
+    private lateinit var sensor4Temp:TextView
+    private lateinit var sensor5Temp:TextView
+    private lateinit var sensor6Temp:TextView
+    private lateinit var sensor7Temp:TextView
+    private lateinit var sensor8Temp:TextView
+    //sensor voltage variables
+    private var sensor1Voltage: Int? = null
+    private var sensor2Voltage: Int? = null
+    private var sensor3Voltage: Int? = null
+    private var sensor4Voltage: Int? = null
+    private var sensor5Voltage: Int? = null
+    private var sensor6Voltage: Int? = null
+    private var sensor7Voltage: Int? = null
+    private var sensor8Voltage: Int? = null
+    //sensor energy saving mode variables
+    private var sensor1ESM:Int = 0
+    private var sensor2ESM:Int = 0
+    private var sensor3ESM:Int = 0
+    private var sensor4ESM:Int = 0
+    private var sensor5ESM:Int = 0
+    private var sensor6ESM:Int = 0
+    private var sensor7ESM:Int = 0
+    private var sensor8ESM:Int = 0
+    //sensor humidity variables
+    private lateinit var sensor1Humidity:TextView
+    private lateinit var sensor2Humidity:TextView
+    private lateinit var sensor3Humidity:TextView
+    private lateinit var sensor4Humidity:TextView
+    private lateinit var sensor5Humidity:TextView
+    private lateinit var sensor6Humidity:TextView
+    private lateinit var sensor7Humidity:TextView
+    private lateinit var sensor8Humidity:TextView
+
+    private lateinit var isConnected:TextView
+
     private lateinit var textView: TextView
     private lateinit var resetButton: Button
     private lateinit var reconnectButton: Button
@@ -54,7 +93,45 @@ class MainActivity : androidx.activity.ComponentActivity() {
 
         textView = findViewById(R.id.textView)
         textView.text = "Message: "
-        //llkhlkjh
+        isConnected = findViewById(R.id.isConnected)
+        isConnected.text = "Not Connected"
+        sensor1Temp = findViewById(R.id.sensor1Temp)
+        sensor1Humidity = findViewById(R.id.sensor1Humidity)
+
+        sensor2Temp = findViewById(R.id.sensor2Temp)
+        sensor2Humidity = findViewById(R.id.sensor2Humidity)
+
+        sensor3Temp = findViewById(R.id.sensor3Temp)
+        sensor3Humidity = findViewById(R.id.sensor3Humidity)
+
+        sensor4Temp = findViewById(R.id.sensor4Temp)
+        sensor4Humidity = findViewById(R.id.sensor4Humidity)
+
+        sensor5Temp = findViewById(R.id.sensor5Temp)
+        sensor5Humidity = findViewById(R.id.sensor5Humidity)
+
+        sensor6Temp = findViewById(R.id.sensor6Temp)
+        sensor6Humidity = findViewById(R.id.sensor6Humidity)
+
+        sensor7Temp = findViewById(R.id.sensor7Temp)
+        sensor7Humidity = findViewById(R.id.sensor7Humidity)
+
+        sensor8Temp = findViewById(R.id.sensor8Temp)
+        sensor8Humidity = findViewById(R.id.sensor8Humidity)
+
+        /*
+        sensor3Temp = findViewById(R.id.sensor3Temp)
+        sensor1Humidity = findViewById(R.id.sensor1Humidity)
+
+        sensor2Temp = findViewById(R.id.sensor2Temp)
+        sensor2Humidity = findViewById(R.id.sensor2Humidity)
+
+        sensor1Temp = findViewById(R.id.sensor1Temp)
+        sensor1Humidity = findViewById(R.id.sensor1Humidity)
+
+        sensor2Temp = findViewById(R.id.sensor2Temp)
+        sensor2Humidity = findViewById(R.id.sensor2Humidity)
+*/
 
         resetButton = findViewById<Button>(R.id.resetButton)
         resetButton.setOnClickListener {
@@ -104,6 +181,9 @@ class MainActivity : androidx.activity.ComponentActivity() {
             inputStream = socket.inputStream
             outputStream = socket.outputStream
             beginListenForData()
+            if (socket.isConnected){
+                isConnected.text = "Connected"
+            }
 
             // Continue with other operations if the connection is successful
 
@@ -143,11 +223,72 @@ class MainActivity : androidx.activity.ComponentActivity() {
                                 // Increment the message count
                                 messageCount++
 
-                                sendAcknowledgement()
+                                //parsing here
+                                val dataList = data.split(":")
+                                val sensorID = dataList[0]
+                                val temperature = dataList[1]
+                                val formattedTemp = "${temperature.toDouble()/100} F"
+                                val humidity = dataList[2]
+                                val formattedHum = "${humidity.toDouble() /100} %"
+                                val batteryVoltage = dataList[3]
+                                val energySavingMode = dataList[4]
+                                //sendAcknowledgement()
                                 // Update the UI with the new message count
                                 handler.post {
                                     messageCountTextView.text = "Message Count: $messageCount"
                                     textView.text = data
+                                   // parseAndPlace(data)
+                                    when(sensorID){
+                                        "1"-> {
+                                            sensor1Temp.text = formattedTemp
+                                            sensor1Humidity.text = formattedHum
+                                            sensor1Voltage = batteryVoltage.toInt()
+                                            sensor1ESM = energySavingMode.toInt()
+                                        }
+                                        "2"-> {
+                                            sensor2Temp.text = formattedTemp
+                                            sensor2Humidity.text = formattedHum
+                                            sensor2Voltage = batteryVoltage.toInt()
+                                            sensor2ESM = energySavingMode.toInt()
+                                        }
+                                        "3"-> {
+                                            sensor3Temp.text = formattedTemp
+                                            sensor3Humidity.text = formattedTemp
+                                            sensor3Voltage = batteryVoltage.toInt()
+                                            sensor3ESM = energySavingMode.toInt()
+                                        }
+                                        "4"-> {
+                                            sensor4Temp.text = formattedTemp
+                                            sensor4Humidity.text = formattedHum
+                                            sensor4Voltage = batteryVoltage.toInt()
+                                            sensor4ESM = energySavingMode.toInt()
+                                        }
+                                        "5"-> {
+                                            sensor5Temp.text = formattedTemp
+                                            sensor5Humidity.text = formattedHum
+                                            sensor5Voltage = batteryVoltage.toInt()
+                                            sensor5ESM = energySavingMode.toInt()
+                                        }
+                                        "6"-> {
+                                            sensor6Temp.text = formattedTemp
+                                            sensor6Humidity.text = formattedHum
+                                            sensor6Voltage = batteryVoltage.toInt()
+                                            sensor6ESM = energySavingMode.toInt()
+                                        }
+                                        "7"-> {
+                                            sensor7Temp.text = formattedTemp
+                                            sensor7Humidity.text = formattedHum
+                                            sensor7Voltage = batteryVoltage.toInt()
+                                            sensor7ESM = energySavingMode.toInt()
+                                        }
+                                        "8"-> {
+                                            sensor8Temp.text = formattedTemp
+                                            sensor8Humidity.text = formattedHum
+                                            sensor8Voltage = batteryVoltage.toInt()
+                                            sensor8ESM = energySavingMode.toInt()
+                                        }
+                                    }
+
                                 }
                             } else {
                                 readBuffer[readBufferPosition++] = b
@@ -155,7 +296,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
                         }
                     }
                 } catch (ex: IOException) {
-                    stopWorker = true
+                    //stopWorker = true
                 }
             }
         }
@@ -163,6 +304,51 @@ class MainActivity : androidx.activity.ComponentActivity() {
         workerThread.start()
 
     }
+
+    private fun parseAndPlace(data: String){
+        val dataList = data.split(":");
+        val sensorID = dataList[0];
+        val temperature = dataList[1];
+        val humidity = dataList[2];
+        val batteryVoltage = dataList[3];
+        val energySavingMode = dataList[4];
+
+        when(sensorID){
+            "1"-> {
+                sensor1Temp.text = temperature
+                sensor1Humidity.text = humidity   
+            }
+            "2"-> {
+                sensor2Temp.text = temperature
+                sensor2Humidity.text = humidity
+            }
+            "3"-> {
+                sensor3Temp.text = temperature
+                sensor3Humidity.text = humidity
+            }
+            "4"-> {
+                sensor4Temp.text = temperature
+                sensor4Humidity.text = humidity
+            }
+            "5"-> {
+                sensor5Temp.text = temperature
+                sensor5Humidity.text = humidity
+            }
+            "6"-> {
+                sensor6Temp.text = temperature
+                sensor6Humidity.text = humidity
+            }
+            "7"-> {
+                sensor7Temp.text = temperature
+                sensor7Humidity.text = humidity
+            }
+            "8"-> {
+                sensor8Temp.text = temperature
+                sensor8Humidity.text = humidity
+            }
+        }
+    }
+
 
     private fun sendAcknowledgement() {
         val message = "ACK\n" // Message to be sent as an acknowledgement

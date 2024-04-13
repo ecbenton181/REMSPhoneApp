@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">BluetoothTestApp</string>
     <string name="textview">TextView</string>
+    <string name="Sensor1Name">S1 Location</string>
+    <string name="Sensor2Name">S2 Location</string>
+    <string name="Sensor3Name">S3 Location</string>
+    <string name="Sensor4Name">S4 Location</string>
+    <string name="Sensor5Name">S5 Location</string>
+    <string name="Sensor6Name">S6 Location</string>
+    <string name="Sensor7Name">S7 Location</string>
+    <string name="Sensor8Name">S8 Location</string>
+    <string name="sensor1Temp"></string>
 </resources>
