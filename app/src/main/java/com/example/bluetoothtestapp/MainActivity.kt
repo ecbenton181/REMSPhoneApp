@@ -2,18 +2,24 @@ package com.example.bluetoothtestapp
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -75,7 +81,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
     private lateinit var sensor8Humidity:TextView
 
     private lateinit var isConnected:TextView
-    val messageList = mutableListOf<String>()
+    private val messageList = mutableListOf<String>()
 
     private lateinit var textView: TextView
     private lateinit var resetButton: Button
@@ -83,10 +89,15 @@ class MainActivity : androidx.activity.ComponentActivity() {
     private var messageCount = 0
     private var macAddress = "98:DA:60:07:B0:64"
 
+    private val CHANNEL_ID = "threshold_notifications"
+
+
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        createNotificationChannel()
 
         messageCountTextView = findViewById(R.id.messageCountTextView)
         messageCountTextView.text = "Message Count: $messageCount"
@@ -168,9 +179,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
             inputStream = socket.inputStream
             outputStream = socket.outputStream
             beginListenForData()
-            if (socket.isConnected){
-                isConnected.text = "Connected"
-            }
+            if (socket.isConnected) isConnected.text = getString(R.string.connected)
 
             // Continue with other operations if the connection is successful
 
@@ -193,7 +202,6 @@ class MainActivity : androidx.activity.ComponentActivity() {
                     val REQUEST_ENABLE_BT = 1
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
                 }
-                val pairedDevices = bluetoothAdapter.bondedDevices
                 // Get the BluetoothDevice object by its MAC address
                 val device = bluetoothAdapter.getRemoteDevice(macAddress)
                 var socket = device.createInsecureRfcommSocketToServiceRecord(MY_UUID)
@@ -260,7 +268,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
         readBuffer = ByteArray(100)
 
         workerThread = Thread {
-            while (/*!Thread.currentThread().isInterrupted && */!stopWorker) {
+            while (!stopWorker) {
                 try {
                     val bytesAvailable: Int = inputStream.available()
                     if (bytesAvailable > 0) {
@@ -280,13 +288,16 @@ class MainActivity : androidx.activity.ComponentActivity() {
                                 //parsing here
                                 val dataList = data.split(":")
                                 val sensorID = dataList[0]
-                                val temperature = dataList[1]
-                                val formattedTemp = "${temperature.toDouble()/100} F"
-                                val humidity = dataList[2]
-                                val formattedHum = "${humidity.toDouble() /100} %"
-                                val batteryVoltage = dataList[3]
-                                val energySavingMode = dataList[4]
-                                //sendAcknowledgement()
+                                val temperature = dataList[1].toDouble() / 100 // Convert to double
+                                val formattedTemp = "$temperature F" // Format as Fahrenheit
+                                val humidity = dataList[2].toDouble() / 100 // Convert to double
+                                val formattedHum = "$humidity %" // Format as percentage
+                                val batteryVoltage = dataList[3].toInt()
+                                val energySavingMode = dataList[4].toInt()
+
+                                // Check thresholds
+                                checkThresholds(sensorID.toInt(), temperature, humidity)
+
                                 // Add the new message to the list
                                 messageList.add(data)
 
@@ -305,50 +316,50 @@ class MainActivity : androidx.activity.ComponentActivity() {
                                         "1"-> {
                                             sensor1Temp.text = formattedTemp
                                             sensor1Humidity.text = formattedHum
-                                            sensor1Voltage = batteryVoltage.toInt()
-                                            sensor1ESM = energySavingMode.toInt()
+                                            sensor1Voltage = batteryVoltage
+                                            sensor1ESM = energySavingMode
                                         }
                                         "2"-> {
                                             sensor2Temp.text = formattedTemp
                                             sensor2Humidity.text = formattedHum
-                                            sensor2Voltage = batteryVoltage.toInt()
-                                            sensor2ESM = energySavingMode.toInt()
+                                            sensor2Voltage = batteryVoltage
+                                            sensor2ESM = energySavingMode
                                         }
                                         "3"-> {
                                             sensor3Temp.text = formattedTemp
-                                            sensor3Humidity.text = formattedTemp
-                                            sensor3Voltage = batteryVoltage.toInt()
-                                            sensor3ESM = energySavingMode.toInt()
+                                            sensor3Humidity.text = formattedHum
+                                            sensor3Voltage = batteryVoltage
+                                            sensor3ESM = energySavingMode
                                         }
                                         "4"-> {
                                             sensor4Temp.text = formattedTemp
                                             sensor4Humidity.text = formattedHum
-                                            sensor4Voltage = batteryVoltage.toInt()
-                                            sensor4ESM = energySavingMode.toInt()
+                                            sensor4Voltage = batteryVoltage
+                                            sensor4ESM = energySavingMode
                                         }
                                         "5"-> {
                                             sensor5Temp.text = formattedTemp
                                             sensor5Humidity.text = formattedHum
-                                            sensor5Voltage = batteryVoltage.toInt()
-                                            sensor5ESM = energySavingMode.toInt()
+                                            sensor5Voltage = batteryVoltage
+                                            sensor5ESM = energySavingMode
                                         }
                                         "6"-> {
                                             sensor6Temp.text = formattedTemp
                                             sensor6Humidity.text = formattedHum
-                                            sensor6Voltage = batteryVoltage.toInt()
-                                            sensor6ESM = energySavingMode.toInt()
+                                            sensor6Voltage = batteryVoltage
+                                            sensor6ESM = energySavingMode
                                         }
                                         "7"-> {
                                             sensor7Temp.text = formattedTemp
                                             sensor7Humidity.text = formattedHum
-                                            sensor7Voltage = batteryVoltage.toInt()
-                                            sensor7ESM = energySavingMode.toInt()
+                                            sensor7Voltage = batteryVoltage
+                                            sensor7ESM = energySavingMode
                                         }
                                         "8"-> {
                                             sensor8Temp.text = formattedTemp
                                             sensor8Humidity.text = formattedHum
-                                            sensor8Voltage = batteryVoltage.toInt()
-                                            sensor8ESM = energySavingMode.toInt()
+                                            sensor8Voltage = batteryVoltage
+                                            sensor8ESM = energySavingMode
                                         }
                                     }
 
@@ -367,13 +378,15 @@ class MainActivity : androidx.activity.ComponentActivity() {
         workerThread.start()
     }
 
+
+
     private fun parseAndPlace(data: String){
-        val dataList = data.split(":");
-        val sensorID = dataList[0];
-        val temperature = dataList[1];
-        val humidity = dataList[2];
-        val batteryVoltage = dataList[3];
-        val energySavingMode = dataList[4];
+        val dataList = data.split(":")
+        val sensorID = dataList[0]
+        val temperature = dataList[1]
+        val humidity = dataList[2]
+        val batteryVoltage = dataList[3]
+        val energySavingMode = dataList[4]
 
         when(sensorID){
             "1"-> {
@@ -456,6 +469,98 @@ class MainActivity : androidx.activity.ComponentActivity() {
 
             // Handle connection failure or timeout
 
+        }
+    }
+    fun openSettings(view: View) {
+        val intent = Intent(this, Settings::class.java)
+        startActivity(intent)
+    }
+
+    private fun checkThresholds(sensorID: Int, temperature: Double, humidity: Double) {
+        val sharedPreferences: SharedPreferences =
+            getSharedPreferences("ThresholdPrefs", Context.MODE_PRIVATE)
+
+        // Retrieve thresholds for temperature and humidity based on sensor ID
+        val temperatureMinStr = sharedPreferences.getString("s$sensorID" + "TempMin", "-1")
+        val temperatureMaxStr = sharedPreferences.getString("s$sensorID" + "TempMax", "-1")
+        val humidityMinStr = sharedPreferences.getString("s$sensorID" + "HumMin", "-1")
+        val humidityMaxStr = sharedPreferences.getString("s$sensorID" + "HumMax", "-1")
+
+        // Convert thresholds to integers or use -1 if they cannot be parsed
+        val temperatureMin = temperatureMinStr?.toIntOrNull() ?: -1
+        val temperatureMax = temperatureMaxStr?.toIntOrNull() ?: -1
+        val humidityMin = humidityMinStr?.toIntOrNull() ?: -1
+        val humidityMax = humidityMaxStr?.toIntOrNull() ?: -1
+
+        // Compare current readings with thresholds
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (temperature < temperatureMin && temperatureMin != -1) {
+            // Temperature is below the minimum threshold
+            val notificationId = "temp_${sensorID}_low".hashCode()
+            val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("Temperature Alert")
+                .setContentText("Temperature for sensor $sensorID is below the minimum threshold!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+            // Show the notification
+            notificationManager.notify(notificationId, notificationBuilder.build())
+        }
+
+        if (temperature > temperatureMax && temperatureMax != -1) {
+            // Temperature is above the maximum threshold
+            val notificationId = "temp_${sensorID}_high".hashCode()
+            val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("Temperature Alert")
+                .setContentText("Temperature for sensor $sensorID is above the maximum threshold!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+            // Show the notification
+            notificationManager.notify(notificationId, notificationBuilder.build())
+        }
+
+        if (humidity < humidityMin && humidityMin != -1) {
+            // Humidity is below the minimum threshold
+            val notificationId = "hum_${sensorID}_low".hashCode()
+            val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("Humidity Alert")
+                .setContentText("Humidity for sensor $sensorID is below the minimum threshold!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+            // Show the notification
+            notificationManager.notify(notificationId, notificationBuilder.build())
+        }
+
+        if (humidity > humidityMax && humidityMax != -1) {
+            // Humidity is above the maximum threshold
+            val notificationId = "hum_${sensorID}_high".hashCode()
+            val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("Humidity Alert")
+                .setContentText("Humidity for sensor $sensorID is above the maximum threshold!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+            // Show the notification
+            notificationManager.notify(notificationId, notificationBuilder.build())
+        }
+    }
+
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.channel_name)
+            val descriptionText = getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 

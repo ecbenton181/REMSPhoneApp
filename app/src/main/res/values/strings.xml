@@ -53,4 +53,13 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="TempLimit">Temperature Limit</string>
+    <string name="humLimit">Humidity Limit</string>
+    <string name="max">Max</string>
+    <string name="min">Min</string>
+    <string name="tl">Temp Limit</string>
+    <string name="hl">Hum Limit</string>
+    <string name="connected">Connected</string>
+    <string name="channel_name">Threshold Notifications</string>
+    <string name="channel_description">Notifications for threshold warnings</string>
 </resources>

@@ -1,33 +1,907 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".Settings">
-
-    <com.google.android.material.appbar.AppBarLayout
+    tools:layout_editor_absoluteX="1dp"
+    tools:layout_editor_absoluteY="1dp"
+    android:fillViewport = "true">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true">
+        android:layout_height="match_parent"
+        tools:context=".Settings">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize" />
+        <!-- s1 -->
 
-    </com.google.android.material.appbar.AppBarLayout>
+        <TextView
+            android:id="@+id/Settings"
+            android:layout_width="212dp"
+            android:layout_height="108dp"
+            android:text="Temperature and Humidity Settings"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.887"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.023" />
 
-    <include layout="@layout/content_settings" />
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="144dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
+            android:text="Save Settings"
+            app:layout_constraintEnd_toEndOf="@+id/backToMainButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/backToMainButton" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="16dp"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        <Button
+            android:id="@+id/backToMainButton"
+            android:layout_width="138dp"
+            android:layout_height="58dp"
+            android:onClick="backToMain"
+            android:text="Main Menu"
+            app:layout_constraintBottom_toTopOf="@+id/tl1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.071"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.078" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <TextView
+            android:id="@+id/tl1"
+            android:layout_width="127dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="76dp"
+            android:text="@string/TempLimit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.053"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s1location" />
+
+        <TextView
+            android:id="@+id/hl1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/humLimit"
+            app:layout_constraintEnd_toEndOf="@+id/tl1"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tl1"
+            app:layout_constraintTop_toBottomOf="@+id/tl1" />
+
+        <TextView
+            android:id="@+id/min1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/min"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s1location" />
+
+        <TextView
+            android:id="@+id/max1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.622"
+            app:layout_constraintStart_toEndOf="@+id/min1"
+            app:layout_constraintTop_toTopOf="@+id/min1" />
+
+        <TextView
+            android:id="@+id/s1location"
+            android:layout_width="126dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="176dp"
+            android:text="@string/Sensor1Name"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s1TempMin"
+            android:layout_width="103dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/min1"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="@+id/min1"
+            app:layout_constraintTop_toBottomOf="@+id/min1" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s1TempMax"
+            android:layout_width="101dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/max1"
+            app:layout_constraintStart_toStartOf="@+id/max1"
+            app:layout_constraintTop_toBottomOf="@+id/max1" />
+
+        <EditText
+            android:inputType="text"
+            android:id="@+id/s1HumMin"
+            android:layout_width="107dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s1TempMin"
+            app:layout_constraintStart_toStartOf="@+id/s1TempMin"
+            app:layout_constraintTop_toBottomOf="@+id/s1TempMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s1HumMax"
+            android:layout_width="102dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s1TempMax"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/s1TempMax"
+            app:layout_constraintTop_toBottomOf="@+id/s1TempMax" />
+
+        <!-- s2 -->
+        <TextView
+            android:id="@+id/tl2"
+            android:layout_width="127dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="76dp"
+            android:text="@string/TempLimit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s2location" />
+
+        <TextView
+            android:id="@+id/hl2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/humLimit"
+            app:layout_constraintEnd_toEndOf="@+id/tl2"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tl2"
+            app:layout_constraintTop_toBottomOf="@+id/tl2" />
+
+        <TextView
+            android:id="@+id/min2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/min"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s2location" />
+
+        <TextView
+            android:id="@+id/max2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.622"
+            app:layout_constraintStart_toEndOf="@+id/min2"
+            app:layout_constraintTop_toTopOf="@+id/min2" />
+
+        <TextView
+            android:id="@+id/s2location"
+            android:layout_width="126dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/Sensor2Name"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/Settings"
+            app:layout_constraintHorizontal_bias="0.473"
+            app:layout_constraintStart_toStartOf="@+id/Settings"
+            app:layout_constraintTop_toBottomOf="@+id/s1HumMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s2TempMin"
+            android:layout_width="103dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/min1"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="@+id/min2"
+            app:layout_constraintTop_toBottomOf="@+id/min2" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s2TempMax"
+            android:layout_width="101dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/max2"
+            app:layout_constraintStart_toStartOf="@+id/max2"
+            app:layout_constraintTop_toBottomOf="@+id/max2" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s2HumMin"
+            android:layout_width="107dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s2TempMin"
+            app:layout_constraintStart_toStartOf="@+id/s2TempMin"
+            app:layout_constraintTop_toBottomOf="@+id/s2TempMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s2HumMax"
+            android:layout_width="102dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s2TempMax"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/s2TempMax"
+            app:layout_constraintTop_toBottomOf="@+id/s2TempMax" />
+
+        <!-- s3 -->
+        <TextView
+            android:id="@+id/tl3"
+            android:layout_width="127dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="76dp"
+            android:text="@string/TempLimit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s3location" />
+
+        <TextView
+            android:id="@+id/hl3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/humLimit"
+            app:layout_constraintEnd_toEndOf="@+id/tl3"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tl3"
+            app:layout_constraintTop_toBottomOf="@+id/tl3" />
+
+        <TextView
+            android:id="@+id/min3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/min"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s3location" />
+
+        <TextView
+            android:id="@+id/max3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.622"
+            app:layout_constraintStart_toEndOf="@+id/min3"
+            app:layout_constraintTop_toTopOf="@+id/min3" />
+
+        <TextView
+            android:id="@+id/s3location"
+            android:layout_width="126dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/Sensor3Name"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/Settings"
+            app:layout_constraintHorizontal_bias="0.473"
+            app:layout_constraintStart_toStartOf="@+id/Settings"
+            app:layout_constraintTop_toBottomOf="@+id/s2HumMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s3TempMin"
+            android:layout_width="103dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/min2"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="@+id/min3"
+            app:layout_constraintTop_toBottomOf="@+id/min3" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s3TempMax"
+            android:layout_width="101dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/max3"
+            app:layout_constraintStart_toStartOf="@+id/max3"
+            app:layout_constraintTop_toBottomOf="@+id/max3" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s3HumMin"
+            android:layout_width="107dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s3TempMin"
+            app:layout_constraintStart_toStartOf="@+id/s3TempMin"
+            app:layout_constraintTop_toBottomOf="@+id/s3TempMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s3HumMax"
+            android:layout_width="102dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s3TempMax"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/s3TempMax"
+            app:layout_constraintTop_toBottomOf="@+id/s3TempMax" />
+
+        <!-- s4 -->
+        <TextView
+            android:id="@+id/tl4"
+            android:layout_width="127dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="76dp"
+            android:text="@string/TempLimit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s4location" />
+
+        <TextView
+            android:id="@+id/hl4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/humLimit"
+            app:layout_constraintEnd_toEndOf="@+id/tl4"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tl4"
+            app:layout_constraintTop_toBottomOf="@+id/tl4" />
+
+        <TextView
+            android:id="@+id/min4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/min"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s4location" />
+
+        <TextView
+            android:id="@+id/max4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.622"
+            app:layout_constraintStart_toEndOf="@+id/min4"
+            app:layout_constraintTop_toTopOf="@+id/min4" />
+
+        <TextView
+            android:id="@+id/s4location"
+            android:layout_width="126dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/Sensor4Name"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/Settings"
+            app:layout_constraintHorizontal_bias="0.473"
+            app:layout_constraintStart_toStartOf="@+id/Settings"
+            app:layout_constraintTop_toBottomOf="@+id/s3HumMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s4TempMin"
+            android:layout_width="103dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/min3"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="@+id/min4"
+            app:layout_constraintTop_toBottomOf="@+id/min4" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s4TempMax"
+            android:layout_width="101dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/max4"
+            app:layout_constraintStart_toStartOf="@+id/max4"
+            app:layout_constraintTop_toBottomOf="@+id/max4" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s4HumMin"
+            android:layout_width="107dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s4TempMin"
+            app:layout_constraintStart_toStartOf="@+id/s4TempMin"
+            app:layout_constraintTop_toBottomOf="@+id/s4TempMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s4HumMax"
+            android:layout_width="102dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s4TempMax"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/s4TempMax"
+            app:layout_constraintTop_toBottomOf="@+id/s4TempMax" />
+        <!-- s5 -->
+        <TextView
+            android:id="@+id/tl5"
+            android:layout_width="127dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="76dp"
+            android:text="@string/TempLimit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s5location" />
+
+        <TextView
+            android:id="@+id/hl5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/humLimit"
+            app:layout_constraintEnd_toEndOf="@+id/tl5"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tl5"
+            app:layout_constraintTop_toBottomOf="@+id/tl5" />
+
+        <TextView
+            android:id="@+id/min5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/min"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s5location" />
+
+        <TextView
+            android:id="@+id/max5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.622"
+            app:layout_constraintStart_toEndOf="@+id/min5"
+            app:layout_constraintTop_toTopOf="@+id/min5" />
+
+        <TextView
+            android:id="@+id/s5location"
+            android:layout_width="126dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/Sensor5Name"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/Settings"
+            app:layout_constraintHorizontal_bias="0.473"
+            app:layout_constraintStart_toStartOf="@+id/Settings"
+            app:layout_constraintTop_toBottomOf="@+id/s4HumMin" />
+
+        <EditText
+            android:id="@+id/s5TempMin"
+            android:textAlignment="center"
+            android:layout_width="103dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="@+id/min4"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="@+id/min5"
+            app:layout_constraintTop_toBottomOf="@+id/min5" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s5TempMax"
+            android:layout_width="101dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/max5"
+            app:layout_constraintStart_toStartOf="@+id/max5"
+            app:layout_constraintTop_toBottomOf="@+id/max5" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s5HumMin"
+            android:layout_width="107dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s5TempMin"
+            app:layout_constraintStart_toStartOf="@+id/s5TempMin"
+            app:layout_constraintTop_toBottomOf="@+id/s5TempMin" />
+
+        <EditText
+            android:id="@+id/s5HumMax"
+            android:textAlignment="center"
+            android:layout_width="102dp"
+            android:layout_height="53dp"
+            android:hint="@string/hl"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="@+id/s5TempMax"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/s5TempMax"
+            app:layout_constraintTop_toTopOf="@+id/s5HumMin" />
+        <!-- s6 -->
+        <TextView
+            android:id="@+id/tl6"
+            android:layout_width="127dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="76dp"
+            android:text="@string/TempLimit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s6location" />
+
+        <TextView
+            android:id="@+id/hl6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/humLimit"
+            app:layout_constraintEnd_toEndOf="@+id/tl6"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tl6"
+            app:layout_constraintTop_toBottomOf="@+id/tl6" />
+
+        <TextView
+            android:id="@+id/min6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/min"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s6location" />
+
+        <TextView
+            android:id="@+id/max6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.622"
+            app:layout_constraintStart_toEndOf="@+id/min6"
+            app:layout_constraintTop_toTopOf="@+id/min6" />
+
+        <TextView
+            android:id="@+id/s6location"
+            android:layout_width="126dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/Sensor6Name"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/Settings"
+            app:layout_constraintHorizontal_bias="0.473"
+            app:layout_constraintStart_toStartOf="@+id/Settings"
+            app:layout_constraintTop_toBottomOf="@+id/s5HumMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s6TempMin"
+            android:layout_width="103dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/min5"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="@+id/min6"
+            app:layout_constraintTop_toBottomOf="@+id/min6" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s6TempMax"
+            android:layout_width="101dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/max6"
+            app:layout_constraintStart_toStartOf="@+id/max6"
+            app:layout_constraintTop_toBottomOf="@+id/max6" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s6HumMin"
+            android:layout_width="107dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s6TempMin"
+            app:layout_constraintStart_toStartOf="@+id/s6TempMin"
+            app:layout_constraintTop_toBottomOf="@+id/s6TempMin" />
+
+        <EditText
+            android:id="@+id/s6HumMax"
+            android:textAlignment="center"
+            android:layout_width="102dp"
+            android:layout_height="53dp"
+            android:hint="@string/hl"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="@+id/s6TempMax"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/s6TempMax"
+            app:layout_constraintTop_toTopOf="@+id/s6HumMin" />
+
+        <!-- s7 -->
+        <TextView
+            android:id="@+id/tl7"
+            android:layout_width="127dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="76dp"
+            android:text="@string/TempLimit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s7location" />
+
+        <TextView
+            android:id="@+id/hl7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/humLimit"
+            app:layout_constraintEnd_toEndOf="@+id/tl7"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tl7"
+            app:layout_constraintTop_toBottomOf="@+id/tl7" />
+
+        <TextView
+            android:id="@+id/min7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/min"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s7location" />
+
+        <TextView
+            android:id="@+id/max7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.622"
+            app:layout_constraintStart_toEndOf="@+id/min7"
+            app:layout_constraintTop_toTopOf="@+id/min7" />
+
+        <TextView
+            android:id="@+id/s7location"
+            android:layout_width="126dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/Sensor7Name"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/Settings"
+            app:layout_constraintHorizontal_bias="0.473"
+            app:layout_constraintStart_toStartOf="@+id/Settings"
+            app:layout_constraintTop_toBottomOf="@+id/s6HumMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s7TempMin"
+            android:layout_width="103dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/min6"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="@+id/min7"
+            app:layout_constraintTop_toBottomOf="@+id/min7" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s7TempMax"
+            android:layout_width="101dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/max7"
+            app:layout_constraintStart_toStartOf="@+id/max7"
+            app:layout_constraintTop_toBottomOf="@+id/max7" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s7HumMin"
+            android:layout_width="107dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s7TempMin"
+            app:layout_constraintStart_toStartOf="@+id/s7TempMin"
+            app:layout_constraintTop_toBottomOf="@+id/s7TempMin" />
+
+        <EditText
+            android:id="@+id/s7HumMax"
+            android:textAlignment="center"
+            android:layout_width="102dp"
+            android:layout_height="53dp"
+            android:hint="@string/hl"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="@+id/s7TempMax"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/s7TempMax"
+            app:layout_constraintTop_toTopOf="@+id/s7HumMin" />
+        <!-- s8 -->
+        <TextView
+            android:id="@+id/tl8"
+            android:layout_width="127dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="76dp"
+            android:text="@string/TempLimit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s8location" />
+
+        <TextView
+            android:id="@+id/hl8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/humLimit"
+            app:layout_constraintEnd_toEndOf="@+id/tl8"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tl8"
+            app:layout_constraintTop_toBottomOf="@+id/tl8" />
+
+        <TextView
+            android:id="@+id/min8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="200dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/min"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/s8location" />
+
+        <TextView
+            android:id="@+id/max8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/max"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.622"
+            app:layout_constraintStart_toEndOf="@+id/min8"
+            app:layout_constraintTop_toTopOf="@+id/min8" />
+
+        <TextView
+            android:id="@+id/s8location"
+            android:layout_width="126dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/Sensor8Name"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/Settings"
+            app:layout_constraintHorizontal_bias="0.473"
+            app:layout_constraintStart_toStartOf="@+id/Settings"
+            app:layout_constraintTop_toBottomOf="@+id/s7HumMin" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s8TempMin"
+            android:layout_width="103dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/min7"
+            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintStart_toStartOf="@+id/min8"
+            app:layout_constraintTop_toBottomOf="@+id/min8" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s8TempMax"
+            android:layout_width="101dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/tl"
+            app:layout_constraintEnd_toEndOf="@+id/max8"
+            app:layout_constraintStart_toStartOf="@+id/max8"
+            app:layout_constraintTop_toBottomOf="@+id/max8" />
+
+        <EditText
+            android:inputType="text"
+            android:textAlignment="center"
+            android:id="@+id/s8HumMin"
+            android:layout_width="107dp"
+            android:layout_height="53dp"
+            android:layout_marginTop="20dp"
+            android:hint="@string/hl"
+            app:layout_constraintEnd_toEndOf="@+id/s8TempMin"
+            app:layout_constraintStart_toStartOf="@+id/s8TempMin"
+            app:layout_constraintTop_toBottomOf="@+id/s8TempMin" />
+
+        <EditText
+            android:id="@+id/s8HumMax"
+            android:textAlignment="center"
+            android:layout_width="102dp"
+            android:layout_height="53dp"
+            android:hint="@string/hl"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="@+id/s8TempMax"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/s8TempMax"
+            app:layout_constraintTop_toTopOf="@+id/s8HumMin" />
+
+        <Button
+            android:id="@+id/clearSettings"
+            android:layout_width="140dp"
+            android:layout_height="57dp"
+            android:text="Reset Settings"
+            app:layout_constraintEnd_toEndOf="@+id/saveButton"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/saveButton"
+            app:layout_constraintTop_toBottomOf="@+id/saveButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+
