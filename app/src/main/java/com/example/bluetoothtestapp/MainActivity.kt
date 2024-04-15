@@ -3,7 +3,6 @@ package com.example.bluetoothtestapp
 import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.Intent
@@ -11,7 +10,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
@@ -31,6 +29,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
     private lateinit var inputStream: InputStream
     private lateinit var outputStream: OutputStream
     private lateinit var workerThread: Thread
+    private lateinit var connectThread: Thread
     private lateinit var readBuffer: ByteArray
     private var readBufferPosition: Int = 0
     private @Volatile var stopWorker: Boolean = false
@@ -76,6 +75,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
     private lateinit var sensor8Humidity:TextView
 
     private lateinit var isConnected:TextView
+    val messageList = mutableListOf<String>()
 
     private lateinit var textView: TextView
     private lateinit var resetButton: Button
@@ -119,21 +119,7 @@ class MainActivity : androidx.activity.ComponentActivity() {
         sensor8Temp = findViewById(R.id.sensor8Temp)
         sensor8Humidity = findViewById(R.id.sensor8Humidity)
 
-        /*
-        sensor3Temp = findViewById(R.id.sensor3Temp)
-        sensor1Humidity = findViewById(R.id.sensor1Humidity)
-
-        sensor2Temp = findViewById(R.id.sensor2Temp)
-        sensor2Humidity = findViewById(R.id.sensor2Humidity)
-
-        sensor1Temp = findViewById(R.id.sensor1Temp)
-        sensor1Humidity = findViewById(R.id.sensor1Humidity)
-
-        sensor2Temp = findViewById(R.id.sensor2Temp)
-        sensor2Humidity = findViewById(R.id.sensor2Humidity)
-*/
-
-        resetButton = findViewById<Button>(R.id.resetButton)
+        resetButton = findViewById(R.id.resetButton)
         resetButton.setOnClickListener {
             messageCount = 0
             messageCountTextView.text = "Message Count: $messageCount"
@@ -162,7 +148,8 @@ class MainActivity : androidx.activity.ComponentActivity() {
             val REQUEST_ENABLE_BT = 1
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
-        val pairedDevices = bluetoothAdapter.bondedDevices
+
+        //val pairedDevices = bluetoothAdapter.bondedDevices
         // Get the BluetoothDevice object by its MAC address
         val device = bluetoothAdapter.getRemoteDevice(macAddress)
         var socket = device.createInsecureRfcommSocketToServiceRecord(MY_UUID)
@@ -191,10 +178,77 @@ class MainActivity : androidx.activity.ComponentActivity() {
             Log.e("BluetoothError", "Connection failed: ${e.message}")
         }
 
+    }
+    private fun remainConnected(){
+        connectThread = Thread{
 
-        // Connect to the device
+                val bluetoothManager = getSystemService(BluetoothManager::class.java)
+
+                // Get the BluetoothAdapter object
+                bluetoothAdapter = bluetoothManager.adapter
+
+                if (!bluetoothAdapter.isEnabled) {
+                    // Enable Bluetooth
+                    val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                    val REQUEST_ENABLE_BT = 1
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+                }
+                val pairedDevices = bluetoothAdapter.bondedDevices
+                // Get the BluetoothDevice object by its MAC address
+                val device = bluetoothAdapter.getRemoteDevice(macAddress)
+                var socket = device.createInsecureRfcommSocketToServiceRecord(MY_UUID)
+
+                // Get a BluetoothSocket object by using the UUID
 
 
+                try {
+                    // Connect with a timeout
+                    socket = device.javaClass.getMethod(
+                        "createRfcommSocket", *arrayOf<Class<*>?>(
+                            Int::class.javaPrimitiveType
+                        )
+                    ).invoke(device, 1) as BluetoothSocket?
+                    socket.connect()
+
+                    inputStream = socket.inputStream
+                    outputStream = socket.outputStream
+                    beginListenForData()
+                    if (socket.isConnected){
+                        isConnected.text = "Connected"
+                    }
+
+                    // Continue with other operations if the connection is successful
+
+                } catch (e: IOException) {
+                    Log.e("BluetoothError", "Connection failed: ${e.message}")
+                }
+
+                while(!socket.isConnected){
+
+                    try {
+                        // Connect with a timeout
+                        socket = device.javaClass.getMethod(
+                            "createRfcommSocket", *arrayOf<Class<*>?>(
+                                Int::class.javaPrimitiveType
+                            )
+                        ).invoke(device, 1) as BluetoothSocket?
+                        socket.connect()
+
+                        inputStream = socket.inputStream
+                        outputStream = socket.outputStream
+                        beginListenForData()
+                        if (socket.isConnected){
+                            isConnected.text = "Connected"
+                        }
+
+                        // Continue with other operations if the connection is successful
+
+                    } catch (e: IOException) {
+                        Log.e("BluetoothError", "Connection failed: ${e.message}")
+                    }
+                }
+        }
+        connectThread.start()
     }
 
     private fun beginListenForData() {
@@ -203,10 +257,10 @@ class MainActivity : androidx.activity.ComponentActivity() {
 
         stopWorker = false
         readBufferPosition = 0
-        readBuffer = ByteArray(11800)
+        readBuffer = ByteArray(100)
 
         workerThread = Thread {
-            while (!Thread.currentThread().isInterrupted && !stopWorker) {
+            while (/*!Thread.currentThread().isInterrupted && */!stopWorker) {
                 try {
                     val bytesAvailable: Int = inputStream.available()
                     if (bytesAvailable > 0) {
@@ -233,11 +287,20 @@ class MainActivity : androidx.activity.ComponentActivity() {
                                 val batteryVoltage = dataList[3]
                                 val energySavingMode = dataList[4]
                                 //sendAcknowledgement()
+                                // Add the new message to the list
+                                messageList.add(data)
+
+                                // Keep only the last 8 messages
+                                if (messageList.size > 8) {
+                                    messageList.removeAt(0)
+                                }
                                 // Update the UI with the new message count
                                 handler.post {
                                     messageCountTextView.text = "Message Count: $messageCount"
-                                    textView.text = data
-                                   // parseAndPlace(data)
+                                    val messages = messageList.joinToString("\n") // Combine messages with newline
+                                    textView.text = messages
+                                    //textView.text = data
+                                    // parseAndPlace(data)
                                     when(sensorID){
                                         "1"-> {
                                             sensor1Temp.text = formattedTemp
@@ -302,7 +365,6 @@ class MainActivity : androidx.activity.ComponentActivity() {
         }
 
         workerThread.start()
-
     }
 
     private fun parseAndPlace(data: String){
